@@ -6,7 +6,6 @@
 package redroom;
 
 import java.sql.*;
-import java.util.Calendar;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.*;
@@ -25,14 +24,18 @@ public class Entry {
     public static String teacherFirst = null;
     public static String teacherLast = null;
     public static String category = null;
-    public static String description = null;
     public static String comment = null;
-    static String deputyCode = null;
+    static String studentID = null;
+    static String teacherID = null;
+    static String deputyID = null;
     static String deputyEmail = null;
-    static String ylcCode = null;
+    static String ylcID = null;
     static String ylcEmail = null;
-    static String hodCode = null;
+    static String hodID = null;
     static String hodEmail = null;
+    static String username = RedRoom.USERNAME;
+    static String userEmail = null;
+    static String subjectID = null;
     static String className = null;
     static String department = null;
     static List<String> entryDays = new ArrayList<String>();
@@ -44,26 +47,40 @@ public class Entry {
         
     }
     
-    int createEntry(String studentID, String subjectCode, 
-            String teacherCode, List<String> days, 
+    /**
+     * 
+     * @param studentIDIn
+     * @param subjectIDIn
+     * @param department
+     * @param teacherIDIn
+     * @param days
+     * @param categoryIn
+     * @param commentIn
+     * @return 
+     */
+    public static int createEntry(String studentIDIn, String subjectIDIn, String department, 
+            String teacherIDIn, List<String> days, 
             /*depending on drop down lists, could use int*/String categoryIn, 
-            String descriptionIn, String commentIn) {
+            String commentIn) {
         Statement stmt = null;
         String sql = null;
         ResultSet rs = null;
-        
+        studentID = studentIDIn;
         entryDays = days;
         String startDate = days.get(0);
         category = categoryIn;
-        description = descriptionIn;
         comment = commentIn;
+        subjectID = subjectIDIn;
+        teacherID = teacherIDIn;
         
         try{
             stmt = CONNECTION.createStatement();
             
+            
+            
             // Retrieve student data
             sql = "SELECT FIRST_NAME, LAST_NAME, YEAR_LEVEL FROM STUDENT"
-                    + " WHERE EQID="+studentID;
+                    + " WHERE EQID='"+studentID+"'";
             rs = stmt.executeQuery(sql);
             
             while (rs.next()) {
@@ -73,41 +90,33 @@ public class Entry {
             }
             
             // Year level information
-            sql = "SELECT YLC_CODE, DEPUTY_CODE FROM YEAR WHERE YEAR="+
+            sql = "SELECT YLC_ID, DEPUTY_ID FROM YEAR WHERE YEAR="+
                     yearLevel;
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                deputyCode = rs.getString("DEPUTY_CODE");
-                ylcCode = rs.getString("YLC_CODE");
+                deputyID = rs.getString("DEPUTY_ID");
+                ylcID = rs.getString("YLC_ID");
             }
             
-            // Department information, including hod code
-            sql="SELECT CLASS_NAME, DEPARTMENT FROM SUBJECT WHERE "
-                    + "CLASS_CODE="+subjectCode;
+            sql = "SELECT HOD_ID FROM DEPARTMENT WHERE DEPARTMENT_NAME='"
+                    +department+"'";
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
-                className = rs.getString("CLASS_NAME");
-                department = rs.getString("DEPARTMENT");
-            }            
-            sql = "SELECT HOD_CODE FROM DEPARTMENT WHERE DEPARTMENT_NAME="
-                    +department;
-            rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                hodCode = rs.getString("HOD_CODE");
+                hodID = rs.getString("HOD_ID");
             }
             
             // ylc, dp and hod emails
-            sql = "SELECT EMAIL FROM TEACHER WHERE TEACHER_CODE="+ylcCode;
+            sql = "SELECT EMAIL FROM TEACHER WHERE TEACHER_ID='"+ylcID+"'";
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 ylcEmail = rs.getString("EMAIL");
             }
-            sql = "SELECT EMAIL FROM TEACHER WHERE TEACHER_CODE="+deputyCode;
+            sql = "SELECT EMAIL FROM TEACHER WHERE TEACHER_ID='"+deputyID+"'";
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 deputyEmail = rs.getString("EMAIL");
             }
-            sql = "SELECT EMAIL FROM TEACHER WHERE TEACHER_CODE="+hodCode;
+            sql = "SELECT EMAIL FROM TEACHER WHERE TEACHER_ID='"+hodID+"'";
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 hodEmail = rs.getString("EMAIL");
@@ -115,7 +124,7 @@ public class Entry {
             
             // Teacher information
             sql = "SELECT FIRST_NAME, LAST_NAME FROM TEACHER WHERE "
-                    + "TEACHER_CODE="+teacherCode;
+                    + "TEACHER_ID='"+teacherID+"'";
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 teacherFirst = rs.getString("FIRST_NAME");
@@ -129,18 +138,19 @@ public class Entry {
             student id, subject code, start date and entry date
             */
             
-            sql = String.format("INSERT INTO ENTRY VALUES (EQID=%1, "
-                    + "CLASS_CODE=%2, START_DATE=%3, STUDENT_NAME=%4, "
-                    + "SUBJECT=%5, TEACHER=%6, DESCRIPTION=%7, COMMENT=%7)", 
-                    studentID, subjectCode, startDate, studentFirst+
+            sql = String.format("INSERT INTO ENTRY VALUES (EQID='%1$s', "
+                    + "CLASS_CODE='%2$s', START_DATE='%3$s', STUDENT_NAME='%4$s'"
+                    + ", SUBJECT='%5$s', TEACHER='%6$s', CATEGORY='%7$s', "
+                    + "COMMENT='%8$s')", 
+                    studentID, subjectID, startDate, studentFirst+
                             " "+studentLast, className, teacherFirst+" "+
-                                    teacherLast, description, comment);
-            stmt.executeQuery(sql);
+                                    teacherLast, category, comment);
+            stmt.executeUpdate(sql);
             for(int i = 0; i<days.size(); i++) {
-                sql = String.format("INSERT INTO ENTRY_DATES VALUES (EQID=%1, "
-                        + "CLASS_CODE=%2, START_DATE=%3, DATE=%4",studentID, 
-                        subjectCode, startDate, entryDays.get(i));
-                stmt.executeQuery(sql);
+                sql = String.format("INSERT INTO ENTRY_DATES VALUES (EQID='%1$s', "
+                        + "CLASS_CODE='%2$s', START_DATE='%3$s', DATE='%4$s'",studentID, 
+                        subjectID, startDate, entryDays.get(i));
+                stmt.executeUpdate(sql);
             }
             
         } catch (SQLException se) {
@@ -190,13 +200,12 @@ public class Entry {
         teacherFirst = null;
         teacherLast = null;
         category = null;
-        description = null;
         comment = null;
-        deputyCode = null;
+        deputyID = null;
         deputyEmail = null;
-        ylcCode = null;
+        ylcID = null;
         ylcEmail = null;
-        hodCode = null;
+        hodID = null;
         hodEmail = null;
         className = null;
         department = null;
