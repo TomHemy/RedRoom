@@ -39,9 +39,12 @@ public class Entry {
     static String className = null;
     static String department = null;
     static List<String> entryDays = new ArrayList<String>();
-    static ZonedDateTime currentDate = RedRoom.getCurrentDate();
+    static String currentDate = RedRoom.getCurrentDate();
     static ZonedDateTime maxDate = RedRoom.getMaxDate();
     
+    public static String getStudentID() {
+        return studentID;
+    }
     
     public static void main(String[] args) {
         
@@ -56,27 +59,39 @@ public class Entry {
      * @param days
      * @param categoryIn
      * @param commentIn
+     * @param subjectTime
      * @return 
      */
-    public static int createEntry(String studentIDIn, String subjectIDIn, String department, 
-            String teacherIDIn, List<String> days, 
-            /*depending on drop down lists, could use int*/String categoryIn, 
-            String commentIn) {
+    public static int createEntry(String studentIDIn, String subjectIDIn, 
+            String department, String teacherIDIn, List<String> days, 
+            String categoryIn, String commentIn, String subjectTime) {
+        /*System.out.print("EQID"+studentIDIn+" subject:"+subjectIDIn+" department:"+department+"teacher:"+teacherIDIn);
+        for (int i = 0; i<days.size(); i++) {
+            System.out.print("\n"+i+"    "+days.get(i));
+        }*/
+        
         Statement stmt = null;
         String sql = null;
         ResultSet rs = null;
-        studentID = studentIDIn;
-        entryDays = days;
-        String startDate = days.get(0);
-        category = categoryIn;
-        comment = commentIn;
-        subjectID = subjectIDIn;
-        teacherID = teacherIDIn;
         
         try{
+            
+            studentID = studentIDIn;
+            entryDays = days;
+            String startDate = null;
+            if (!days.isEmpty()) {
+                startDate = days.get(0);
+            } else {
+                System.out.print("Error: Please select at least one date");
+                return 6;
+            }
+        
+            category = categoryIn;
+            comment = commentIn;
+            subjectID = subjectIDIn;
+            teacherID = teacherIDIn;
+            
             stmt = CONNECTION.createStatement();
-            
-            
             
             // Retrieve student data
             sql = "SELECT FIRST_NAME, LAST_NAME, YEAR_LEVEL FROM STUDENT"
@@ -131,25 +146,32 @@ public class Entry {
                 teacherLast = rs.getString("LAST_NAME");
             }
             
+            sql = "SELECT CLASS_NAME FROM SUBJECT WHERE CLASS_CODE='"+subjectID+"'";
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                className = rs.getString("CLASS_NAME");
+            }
+            
             /*
             Create row in entry with all information except entry dates.
             
             For each date in entryDays, enter a new row in entrydatys table with
             student id, subject code, start date and entry date
             */
-            
-            sql = String.format("INSERT INTO ENTRY VALUES (EQID='%1$s', "
-                    + "CLASS_CODE='%2$s', START_DATE='%3$s', STUDENT_NAME='%4$s'"
-                    + ", SUBJECT='%5$s', TEACHER='%6$s', CATEGORY='%7$s', "
-                    + "COMMENT='%8$s')", 
+                       
+            sql = String.format("INSERT INTO ENTRY (EQID, CLASS_CODE, START_DATE"
+                    + ", STUDENT_NAME, SUBJECT_NAME, TEACHER, CATEGORY, "
+                    + "COMMENT_TEXT, DATE_CREATED, SUBJECT_TIME) VALUES ('%1$s', '%2$s', '%3$s', '%4$s'"
+                    + ", '%5$s', '%6$s', '%7$s', '%8$s', '%9$s', '%10$s')", 
                     studentID, subjectID, startDate, studentFirst+
                             " "+studentLast, className, teacherFirst+" "+
-                                    teacherLast, category, comment);
+                            teacherLast, category, comment, currentDate, subjectTime);
             stmt.executeUpdate(sql);
             for(int i = 0; i<days.size(); i++) {
-                sql = String.format("INSERT INTO ENTRY_DATES VALUES (EQID='%1$s', "
-                        + "CLASS_CODE='%2$s', START_DATE='%3$s', DATE='%4$s'",studentID, 
-                        subjectID, startDate, entryDays.get(i));
+                sql = String.format("INSERT INTO ENTRY_DATES (EQID, CLASS_CODE, "
+                        + "START_DATE, DATE) VALUES ('%1$s', '%2$s', '%3$s', "
+                        + "'%4$s')",studentID, subjectID, startDate, 
+                        entryDays.get(i));
                 stmt.executeUpdate(sql);
             }
             
@@ -166,7 +188,8 @@ public class Entry {
                 if(stmt != null)
                     stmt.close();
             } catch (SQLException se2) {
-                System.out.println("Error: Unable to close statement");
+                System.out.println("Error: Unable to close statement\n"
+                        + "SQLException: "+se2.getMessage());
                 return 3;
             }
             stmt = null;
@@ -174,40 +197,34 @@ public class Entry {
                 if(rs != null)
                     rs.close();
             } catch (SQLException se3) { 
-                System.out.println("Error: Unable to close ResultSet");
+                System.out.println("Error: Unable to close ResultSet\n"
+                        + "SQLException: "+se3.getMessage());
                 return 4;
             }
             rs = null;
-            try {
-                if(CONNECTION != null)
-                    CONNECTION.close();
-            } catch (SQLException se4) {
-                System.out.println("Error: Unable to close connection");
-                return 5;
-            }
+            
         }
         return 0;
     }
     
-    private static void modifyEntry() {
-        
+    public static int closeConnection() {
+        try {
+            if(CONNECTION != null)
+                CONNECTION.close();
+        } catch (SQLException se4) {
+            System.out.println("Error: Unable to close connection\n"
+                    + "SQLException: "+se4.getMessage());
+            return 5;
+        }        
+        return 0;
     }
     
-    private static void deleteEntry() {
-        studentFirst = null;
-        studentLast = null;
-        yearLevel = 0;
-        teacherFirst = null;
-        teacherLast = null;
-        category = null;
-        comment = null;
-        deputyID = null;
-        deputyEmail = null;
-        ylcID = null;
-        ylcEmail = null;
-        hodID = null;
-        hodEmail = null;
-        className = null;
-        department = null;
+    // TODO admin functions
+    private static void modifyEntry(String studentID, String subjectID, String startDate) {
+        deleteEntry(studentID, subjectID, startDate);
+    }
+    
+    private static void deleteEntry(String studentID, String subjectID, String startDate) {
+        
     }
 }

@@ -128,7 +128,7 @@ public class RedRoom {
     * TODO create a GUI for the program
     */
     static void displayUI() {
-        NewEntry form = new NewEntry();
+        View form = new View();
         form.setVisible(true);
     }
     
@@ -149,8 +149,9 @@ public class RedRoom {
         return allDepartments.toArray();
     }
     
-    public static final ZonedDateTime getCurrentDate() {
-        return currentDate;
+    public static final String getCurrentDate() {
+        String date = String.format("%1$d-%2$d-%3$d", currentDate.getYear(), currentDate.getMonthValue(), currentDate.getDayOfMonth());
+        return date;
     }
     
     public static final ZonedDateTime getMaxDate() {
