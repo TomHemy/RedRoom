@@ -10,6 +10,8 @@ import java.sql.*;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -114,7 +116,7 @@ public class RedRoom {
             ZonedDateTime offsetDate = currentDate.plusDays(i);
             if (!offsetDate.getDayOfWeek().toString()
                     .matches("SATURDAY|SUNDAY")) {
-                range[j] = String.format("%1$s - %2$s-%3$s-%4$s", 
+                range[j] = String.format("%1$s - %2$s/%3$s/%4$s", 
                         offsetDate.getDayOfWeek().toString(), 
                         offsetDate.getDayOfMonth(), offsetDate.getMonthValue(), 
                         offsetDate.getYear());
@@ -132,9 +134,45 @@ public class RedRoom {
         form.setVisible(true);
     }
     
+    /**
+     * 
+     * @return Array of | Student name | Subject name | Teacher | Category | Comment |
+     */
+    public static Object[][] allEntries(String date) {
+        Object[][] entries = null;
+        int i = 0;
+        try {
+            Statement stmt = CONN.createStatement();
+            String sql = null;
+            ResultSet rs = null;
+            //String date = getCurrentDate();
+            sql = "SELECT STUDENT_NAME, SUBJECT_NAME, TEACHER, CATEGORY, "
+                    + "COMMENT_TEXT, CLASS_CODE, EQID FROM ENTRY WHERE (EQID IN (SELECT EQID FROM"
+                    + " ENTRY_DATES WHERE DATE='"+date+"')) AND (CLASS_CODE IN "
+                    + "(SELECT CLASS_CODE FROM ENTRY_DATES WHERE DATE='" + date
+                    + "')) AND (START_DATE IN (SELECT START_DATE FROM "
+                    + "ENTRY_DATES WHERE DATE='"+date+"'))";
+            rs = stmt.executeQuery(sql);
+            if (rs.last()) {
+                entries = new Object[rs.getRow()][6];
+                rs.beforeFirst();
+            }
+            while (rs.next()) {
+                entries[i] = new Object[] {rs.getString(1) + " - " + rs.getString(7), rs.getString(3), rs.getString(2) + " - " + rs.getString(6), rs.getString(4), rs.getString(5), false};
+                i++;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(RedRoom.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return entries;
+    }
+    
+    
+    /*
+    Get functions
+    */
     public static final Object[] getAllStudents() {
         return allStudents.toArray();
-        //return allStudents;
     }
     
     public static final Object[] getAllSubjects() {
@@ -150,7 +188,8 @@ public class RedRoom {
     }
     
     public static final String getCurrentDate() {
-        String date = String.format("%1$d-%2$d-%3$d", currentDate.getYear(), currentDate.getMonthValue(), currentDate.getDayOfMonth());
+        String date = String.format("%1$d-%2$d-%3$d", currentDate.getYear(), 
+                currentDate.getMonthValue(), currentDate.getDayOfMonth());
         return date;
     }
     

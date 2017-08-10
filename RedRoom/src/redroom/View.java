@@ -5,6 +5,8 @@
  */
 package redroom;
 
+import java.text.SimpleDateFormat;
+
 /**
  *
  * @author themy0
@@ -27,43 +29,258 @@ public class View extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        newEntryButton = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        dateSelector = new javax.swing.JSpinner();
+        today = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        entriesList = new javax.swing.JTable();
+        markRollButton = new javax.swing.JButton();
+        emailButton = new javax.swing.JButton();
+        closeButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        editButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Red Room");
 
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        newEntryButton.setText("New");
+        newEntryButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                newEntryButtonActionPerformed(evt);
             }
         });
+
+        jLabel1.setText("Referrals for");
+
+        dateSelector.setModel(new javax.swing.SpinnerDateModel());
+        dateSelector.setEditor(new javax.swing.JSpinner.DateEditor(dateSelector, "dd/MM/yyyy"));
+        dateSelector.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                dateChanged(evt);
+            }
+        });
+
+        today.setFont(new java.awt.Font("Tahoma", 0, 8)); // NOI18N
+        today.setText("Today");
+        today.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                todayActionPerformed(evt);
+            }
+        });
+
+        entriesList.setAutoCreateRowSorter(true);
+        entriesList.setModel(new javax.swing.table.DefaultTableModel(
+            RedRoom.allEntries(new SimpleDateFormat("yyyy-MM-dd").format(dateSelector.getValue())),
+            new String [] {
+                "Student", "Teacher", "Subject", "Category", "Description", "Roll"
+            }
+        )
+        {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(entriesList);
+
+        markRollButton.setText("Mark Roll");
+
+        emailButton.setText("Email");
+
+        closeButton.setText("Close");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        jLabel2.setText("Red Room Referrals");
+
+        editButton.setText("Edit");
+        editButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editButtonActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Delete");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton1)
-                .addContainerGap(317, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1044, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dateSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(today)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(newEntryButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(markRollButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(emailButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(editButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(closeButton)))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(344, 344, 344)
+                .addComponent(jLabel2)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(266, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addContainerGap()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(dateSelector, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(today))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(newEntryButton)
+                    .addComponent(markRollButton)
+                    .addComponent(emailButton)
+                    .addComponent(closeButton)
+                    .addComponent(editButton)
+                    .addComponent(jButton1))
+                .addGap(26, 26, 26))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void newEntryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newEntryButtonActionPerformed
         NewEntry newEntry = new NewEntry();
+        this.setVisible(false);
         newEntry.setVisible(true);
-// TODO add your handling code here:
-    }//GEN-LAST:event_jButton1ActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_newEntryButtonActionPerformed
 
+    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+        this.setVisible(false);
+        this.dispose();
+        System.exit(0);
+    }//GEN-LAST:event_closeButtonActionPerformed
+
+    private void dateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_dateChanged
+        refreshEntryTable();
+        /*entriesList.setModel(new javax.swing.table.DefaultTableModel(
+            RedRoom.allEntries(new SimpleDateFormat("yyyy-MM-dd").format(dateSelector.getValue())),
+            new String [] {
+                "Student", "Teacher", "Subject", "Category", "Description", "Roll"
+            }
+        )
+        {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        }
+        );*/
+    }//GEN-LAST:event_dateChanged
+
+    private void todayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_todayActionPerformed
+        dateSelector.setModel(new javax.swing.SpinnerDateModel());
+        dateSelector.setEditor(new javax.swing.JSpinner.DateEditor(dateSelector, "dd/MM/yyyy"));
+        refreshEntryTable();
+        /*entriesList.setModel(new javax.swing.table.DefaultTableModel(
+            RedRoom.allEntries(new SimpleDateFormat("yyyy-MM-dd").format(dateSelector.getValue())),
+            new String [] {
+                "Student", "Teacher", "Subject", "Category", "Description", "Roll"
+            }
+        )
+        {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        }
+        );*/
+    }//GEN-LAST:event_todayActionPerformed
+
+    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+        int row = entriesList.getSelectedRow();
+        String studentID = entriesList.getValueAt(row, 0).toString().split(" - ")[1];
+        String classCode = entriesList.getValueAt(row, 2).toString().split(" - ")[1];
+    }//GEN-LAST:event_editButtonActionPerformed
+
+    private void refreshEntryTable() {
+        entriesList.setModel(new javax.swing.table.DefaultTableModel(
+            RedRoom.allEntries(new SimpleDateFormat("yyyy-MM-dd").format(dateSelector.getValue())),
+            new String [] {
+                "Student", "Teacher", "Subject", "Category", "Description", "Roll"
+            }
+        )
+        {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        }
+        );
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -100,6 +317,17 @@ public class View extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton closeButton;
+    private javax.swing.JSpinner dateSelector;
+    private javax.swing.JButton editButton;
+    private javax.swing.JButton emailButton;
+    private javax.swing.JTable entriesList;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton markRollButton;
+    private javax.swing.JButton newEntryButton;
+    private javax.swing.JButton today;
     // End of variables declaration//GEN-END:variables
 }

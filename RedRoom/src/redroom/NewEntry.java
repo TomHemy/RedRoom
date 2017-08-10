@@ -8,6 +8,7 @@ package redroom;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+import java.text.SimpleDateFormat;
 /**
  *
  * @author themy0
@@ -30,17 +31,16 @@ public class NewEntry extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialog1 = new javax.swing.JDialog();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
         allStudentsCombobox = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         subjectCombobox = new javax.swing.JComboBox<>();
         periodCombobox = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        daySpinner = new javax.swing.JSpinner();
-        monthSpinner = new javax.swing.JSpinner();
-        yearSpinner = new javax.swing.JSpinner();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         teacherCombobox = new javax.swing.JComboBox<>();
@@ -72,11 +72,59 @@ public class NewEntry extends javax.swing.JFrame {
         dateSpinner = new javax.swing.JSpinner();
         jLabel11 = new javax.swing.JLabel();
 
+        jDialog1.setPreferredSize(new java.awt.Dimension(150, 120));
+        jDialog1.setSize(new java.awt.Dimension(150, 120));
+
+        jButton1.setText("Yes");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("No");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jLabel13.setText("Are you sure?");
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialog1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDialog1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel13)
+                .addGap(39, 39, 39))
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("NewEntry");
+        setTitle("Create a New Entry");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
         allStudentsCombobox.setMaximumRowCount(20);
         allStudentsCombobox.setModel(new DefaultComboBoxModel(RedRoom.getAllStudents()));
+        allStudentsCombobox.setSelectedIndex(-1);
         allStudentsCombobox.setName(""); // NOI18N
         allStudentsCombobox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -90,29 +138,20 @@ public class NewEntry extends javax.swing.JFrame {
 
         subjectCombobox.setMaximumRowCount(20);
         subjectCombobox.setModel(new DefaultComboBoxModel(RedRoom.getAllSubjects()));
+        subjectCombobox.setSelectedIndex(-1
+        );
 
         periodCombobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Form", "1", "2", "3", "4" }));
+        periodCombobox.setSelectedIndex(-1);
 
         jLabel3.setText("Period");
-
-        daySpinner.setModel(new javax.swing.SpinnerDateModel());
-        daySpinner.setEditor(new javax.swing.JSpinner.DateEditor(daySpinner, "dd"));
-
-        monthSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.MONTH));
-        monthSpinner.setEditor(new javax.swing.JSpinner.DateEditor(monthSpinner, "MM"));
-
-        yearSpinner.setModel(new javax.swing.SpinnerDateModel(new java.util.Date(), null, null, java.util.Calendar.YEAR));
-        yearSpinner.setEditor(new javax.swing.JSpinner.DateEditor(yearSpinner, "yyyy"));
-
-        jLabel4.setText("/");
-
-        jLabel5.setText("/");
 
         jLabel6.setText("on");
 
         jLabel7.setText("Teacher");
 
         teacherCombobox.setModel(new DefaultComboBoxModel(RedRoom.getAllTeachers()));
+        teacherCombobox.setSelectedIndex(-1);
 
         jLabel8.setText("Year Level:");
 
@@ -156,9 +195,12 @@ public class NewEntry extends javax.swing.JFrame {
         jCheckBox10.setText(RedRoom.getDateRange()[9]);
 
         categoryCombobox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Disruptive behaviour in buddy class", "Disruptive or misbehaviour in Red Room", "Inappropriate filming of other students", "Other", "Pattern of truanting or skipping class", "Persistent failure to work in class", "Persistent inappropriate behaviour or language", "Persistent lateness to class", "Persistent or extreme rudeness to teacher", "Persistent or high level bullying", "Persistent or high level disruptive behaviour", "Persistent or high level harassment", "Persistent or high level misue of technology", "Persistent unsafe practice", "Refusal to follow critical direction from teacher", "Refusal to negotiate ACT plan", "Refusal to negotiate modified program", "Significant or persistent vandalism", "Smoking", "Unresolved gross disobedience", "Unresolved inappropriate behaviour in playground", "Unresolved non compliance with ACT plan" }));
+        categoryCombobox.setSelectedIndex(-1);
 
         comment.setColumns(20);
+        comment.setLineWrap(true);
         comment.setRows(5);
+        comment.setTabSize(4);
         commentScrollPane.setViewportView(comment);
 
         cancelButton.setText("Cancel");
@@ -169,6 +211,7 @@ public class NewEntry extends javax.swing.JFrame {
         });
 
         DepartmentCombobox.setModel(new DefaultComboBoxModel(RedRoom.getAllDepartments()));
+        DepartmentCombobox.setSelectedIndex(-1);
         DepartmentCombobox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 DepartmentComboboxActionPerformed(evt);
@@ -183,54 +226,49 @@ public class NewEntry extends javax.swing.JFrame {
         dateSpinner.setEditor(new javax.swing.JSpinner.DateEditor(dateSpinner, "dd/MM/yyyy"));
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel11.setText("New Entry");
+        jLabel11.setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(subjectCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel14))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(allStudentsCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel8)))
+                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(64, 64, 64)
-                                .addComponent(DepartmentCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(HoDLabel)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel11)
-                                    .addComponent(YearLevelLabel))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(DPLabel)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(8, 8, 8)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(allStudentsCombobox, 0, 85, Short.MAX_VALUE)
+                                    .addComponent(subjectCombobox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(10, 10, 10)
-                                .addComponent(jLabel12)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(YLCLabel)
-                                .addContainerGap(129, Short.MAX_VALUE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel14)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(DepartmentCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel9)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(HoDLabel))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(YearLevelLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel10)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(DPLabel)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel12)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(YLCLabel))))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(11, 11, 11)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -250,8 +288,8 @@ public class NewEntry extends javax.swing.JFrame {
                                                     .addComponent(jCheckBox10))
                                                 .addGap(227, 227, 227))
                                             .addGroup(layout.createSequentialGroup()
-                                                .addComponent(commentScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(commentScrollPane)
+                                                .addGap(18, 18, 18)
                                                 .addComponent(createButton)))
                                         .addGap(29, 29, 29)
                                         .addComponent(cancelButton))
@@ -261,25 +299,18 @@ public class NewEntry extends javax.swing.JFrame {
                                     .addComponent(jLabel3)
                                     .addComponent(jLabel7))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(periodCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jLabel6)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(daySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(monthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(jLabel5)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(yearSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(teacherCombobox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(dateSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(dateSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(teacherCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(296, 296, 296)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(259, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -308,11 +339,6 @@ public class NewEntry extends javax.swing.JFrame {
                     .addComponent(periodCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3)
-                        .addComponent(monthSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(yearSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5)
-                        .addComponent(daySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)
                         .addComponent(jLabel6)
                         .addComponent(dateSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -339,9 +365,9 @@ public class NewEntry extends javax.swing.JFrame {
                 .addComponent(jCheckBox9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jCheckBox10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addComponent(categoryCombobox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(createButton)
@@ -365,23 +391,36 @@ public class NewEntry extends javax.swing.JFrame {
     }//GEN-LAST:event_DepartmentComboboxActionPerformed
 
     private void createButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createButtonActionPerformed
+        this.jDialog1.setVisible(true);
+    }//GEN-LAST:event_createButtonActionPerformed
+
+    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
+        this.setVisible(false);
+        View view = new View();
+        view.setVisible(true);
+        this.dispose();
+        //Entry.closeConnection();
+        
+    }//GEN-LAST:event_cancelButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         List<String> days = new ArrayList<>();
         JCheckBox[] boxes = {jCheckBox1, jCheckBox2, jCheckBox3, jCheckBox4, jCheckBox5, jCheckBox6, jCheckBox7, jCheckBox8, jCheckBox9, jCheckBox10};
         for (int i = 0; i < 10; i++) {
             if (boxes[i].isSelected()) {
-                days.add(boxes[i].toString().split(" - ")[1].split("-")[2].substring(0, boxes[i].toString().split(" - ")[1].split("-")[2].length()-1)+"-"+boxes[i].toString().split(" - ")[1].split("-")[1]+"-"+boxes[i].toString().split(" - ")[1].split("-")[0]);
+                days.add(boxes[i].toString().split(" - ")[1].split("-")[2].substring(0, boxes[i].toString().split(" - ")[1].split("/")[2].length()-1)+"-"+boxes[i].toString().split(" - ")[1].split("/")[1]+"-"+boxes[i].toString().split(" - ")[1].split("/")[0]);
             }
         }
         //String subjectTime = String.format("Period %1$s on %2$s/%3$s/%4$s", periodCombobox.getSelectedItem(), daySpinner.getValue().toString(), monthSpinner.getValue().toString(), yearSpinner.getValue().toString());
-        String subjectTime = String.format("Period %1$s on %2$s", periodCombobox.getSelectedItem(), dateSpinner.getValue().toString().substring(0, 9));
+        String subjectTime = String.format("Period %1$s on %2$s", periodCombobox.getSelectedItem(), new SimpleDateFormat("yyyy-MM-dd").format(dateSpinner.getValue()));
         Entry.createEntry(allStudentsCombobox.getSelectedItem().toString(), subjectCombobox.getSelectedItem().toString(), DepartmentCombobox.getSelectedItem().toString(), teacherCombobox.getSelectedItem().toString(), days, categoryCombobox.getSelectedItem().toString(), comment.getText(), subjectTime);
-    }//GEN-LAST:event_createButtonActionPerformed
+        this.cancelButtonActionPerformed(evt);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.dispose();
-        //Entry.closeConnection();
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cancelButtonActionPerformed
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        this.jDialog1.setVisible(false);
+        this.jDialog1.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -431,7 +470,8 @@ public class NewEntry extends javax.swing.JFrame {
     private javax.swing.JScrollPane commentScrollPane;
     private javax.swing.JButton createButton;
     private javax.swing.JSpinner dateSpinner;
-    private javax.swing.JSpinner daySpinner;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox10;
     private javax.swing.JCheckBox jCheckBox2;
@@ -442,24 +482,22 @@ public class NewEntry extends javax.swing.JFrame {
     private javax.swing.JCheckBox jCheckBox7;
     private javax.swing.JCheckBox jCheckBox8;
     private javax.swing.JCheckBox jCheckBox9;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JSpinner monthSpinner;
     private javax.swing.JComboBox<String> periodCombobox;
     private javax.swing.JComboBox<String> subjectCombobox;
     private javax.swing.JComboBox<String> teacherCombobox;
-    private javax.swing.JSpinner yearSpinner;
     // End of variables declaration//GEN-END:variables
 }
 /*RedRoom.getAllStudents().toArray(new String[RedRoom.getAllStudents().size()])
