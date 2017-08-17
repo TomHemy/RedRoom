@@ -9,6 +9,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -40,7 +42,11 @@ public class Entry {
     static String department = null;
     static List<String> entryDays = new ArrayList<String>();
     static String currentDate = RedRoom.getCurrentDate();
-    static ZonedDateTime maxDate = RedRoom.getMaxDate();
+    //static ZonedDateTime maxDate = RedRoom.getMaxDate();
+    
+    //private static String origStudentID = null;
+    //private static String origClassCode = null;
+    //private static String origStartDate = null;
     
     public static String getStudentID() {
         return studentID;
@@ -59,16 +65,12 @@ public class Entry {
      * @param days
      * @param categoryIn
      * @param commentIn
-     * @param subjectTime
-     * @return 
+     * @param period
+     * @param date 
      */
-    public static int createEntry(String studentIDIn, String subjectIDIn, 
+    public static void createEntry(String studentIDIn, String subjectIDIn, 
             String department, String teacherIDIn, List<String> days, 
-            String categoryIn, String commentIn, String subjectTime) {
-        /*System.out.print("EQID"+studentIDIn+" subject:"+subjectIDIn+" department:"+department+"teacher:"+teacherIDIn);
-        for (int i = 0; i<days.size(); i++) {
-            System.out.print("\n"+i+"    "+days.get(i));
-        }*/
+            String categoryIn, String commentIn, String period, String date) {
         
         Statement stmt = null;
         String sql = null;
@@ -83,7 +85,6 @@ public class Entry {
                 startDate = days.get(0);
             } else {
                 System.out.print("Error: Please select at least one date");
-                return 6;
             }
         
             category = categoryIn;
@@ -146,7 +147,8 @@ public class Entry {
                 teacherLast = rs.getString("LAST_NAME");
             }
             
-            sql = "SELECT CLASS_NAME FROM SUBJECT WHERE CLASS_CODE='"+subjectID+"'";
+            sql = "SELECT CLASS_NAME FROM SUBJECT WHERE CLASS_CODE='"+
+                    subjectID+"'";
             rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 className = rs.getString("CLASS_NAME");
@@ -155,34 +157,34 @@ public class Entry {
             /*
             Create row in entry with all information except entry dates.
             
-            For each date in entryDays, enter a new row in entrydatys table with
+            For each date in entryDays, enter a new row in entrydays table with
             student id, subject code, start date and entry date
             */
                        
             sql = String.format("INSERT INTO ENTRY (EQID, CLASS_CODE, START_DATE"
                     + ", STUDENT_NAME, SUBJECT_NAME, TEACHER, CATEGORY, "
-                    + "COMMENT_TEXT, DATE_CREATED, SUBJECT_TIME) VALUES ('%1$s', '%2$s', '%3$s', '%4$s'"
-                    + ", '%5$s', '%6$s', '%7$s', '%8$s', '%9$s', '%10$s')", 
-                    studentID, subjectID, startDate, studentFirst+
-                            " "+studentLast, className, teacherFirst+" "+
-                            teacherLast, category, comment, currentDate, subjectTime);
+                    + "COMMENT_TEXT, DATE_CREATED, PERIOD, DATE, DEPARTMENT) VALUES "
+                    + "('%1$s', '%2$s', '%3$s', '%4$s', '%5$s', '%6$s', '%7$s',"
+                    + " '%8$s', '%9$s', '%10$s', '%11$s', '%12$s')", 
+                    studentID, subjectID, startDate, studentFirst+" "+
+                            studentLast, className, teacherID
+                    , category, comment, currentDate, period, date, department);
             stmt.executeUpdate(sql);
             for(int i = 0; i<days.size(); i++) {
                 sql = String.format("INSERT INTO ENTRY_DATES (EQID, CLASS_CODE, "
-                        + "START_DATE, DATE) VALUES ('%1$s', '%2$s', '%3$s', "
-                        + "'%4$s')",studentID, subjectID, startDate, 
+                        + "START_DATE, DATE, ROLL_MARKED) VALUES ('%1$s', '%2$s', '%3$s', "
+                        + "'%4$s', 0)", studentID, subjectID, startDate, 
                         entryDays.get(i));
                 stmt.executeUpdate(sql);
             }
+            
             
         } catch (SQLException se) {
             System.out.println("SQLException: " + se.getMessage());
             System.out.println("SQLState: " + se.getSQLState());
             System.out.println("VendorError: " + se.getErrorCode());
-            return 1;
         } catch (Exception e) {
             System.out.println("Exception: "+e.getMessage());
-            return 2;
         } finally {
             try {
                 if(stmt != null)
@@ -190,7 +192,6 @@ public class Entry {
             } catch (SQLException se2) {
                 System.out.println("Error: Unable to close statement\n"
                         + "SQLException: "+se2.getMessage());
-                return 3;
             }
             stmt = null;
             try {
@@ -199,12 +200,10 @@ public class Entry {
             } catch (SQLException se3) { 
                 System.out.println("Error: Unable to close ResultSet\n"
                         + "SQLException: "+se3.getMessage());
-                return 4;
             }
             rs = null;
             
         }
-        return 0;
     }
     
     public static int closeConnection() {
@@ -220,11 +219,39 @@ public class Entry {
     }
     
     // TODO admin functions
-    private static void modifyEntry(String studentID, String subjectID, String startDate) {
-        deleteEntry(studentID, subjectID, startDate);
+    public static void modifyEntry(String origSID, String origCC, String origStartDate, String studentIDIn, String subjectIDIn, 
+            String department, String teacherIDIn, List<String> days, 
+            String categoryIn, String commentIn, String period, String date) {
+
+        String startDate = null;
+        if (!days.isEmpty()) {
+            startDate = days.get(0);
+        } else {
+            System.out.print("Error: Please select at least one date");
+        }
+        deleteEntry(origSID, origCC, origStartDate);
+        createEntry(studentIDIn, subjectIDIn, department, teacherIDIn, days,
+                categoryIn, commentIn, period, date);
+        
     }
     
-    private static void deleteEntry(String studentID, String subjectID, String startDate) {
-        
+    public static void deleteEntry(String studentID, String subjectID, 
+            String startDate) {
+        try {
+            Statement stmt = null;
+            String sql = null;
+            stmt = CONNECTION.createStatement();
+            
+            sql = String.format("DELETE FROM ENTRY WHERE EQID='%1$s' AND "
+                    + "CLASS_CODE='%2$s' AND START_DATE='%3$s'", studentID, 
+                    subjectID, startDate);
+            stmt.executeUpdate(sql);
+            sql = String.format("DELETE FROM ENTRY_DATES WHERE EQID='%1$s' AND "
+                    + "CLASS_CODE='%2$s' AND START_DATE='%3$s'", studentID, 
+                    subjectID, startDate);
+            stmt.executeUpdate(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(Entry.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

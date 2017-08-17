@@ -6,13 +6,22 @@
 package redroom;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author themy0
  */
 public class View extends javax.swing.JFrame {
-
+    public static String studentID = null;
+    public static String teacher = null;
+    public static String classCode = null;
+    public static String startDate = null;
+    public static String category = null;
+    public static String comment = null;
+    public static Object[][] dates = new Object[10][2];
+    
     /**
      * Creates new form View
      */
@@ -29,6 +38,10 @@ public class View extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDialog1 = new javax.swing.JDialog();
+        jLabel3 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
         newEntryButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         dateSelector = new javax.swing.JSpinner();
@@ -39,8 +52,55 @@ public class View extends javax.swing.JFrame {
         emailButton = new javax.swing.JButton();
         closeButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        editButton = new javax.swing.JButton();
+        openButton = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        errorLabel = new javax.swing.JLabel();
+
+        jDialog1.setSize(new java.awt.Dimension(150, 120));
+
+        jLabel3.setText("Are you sure?");
+
+        jButton2.setText("Yes");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("No");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3))
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addGap(29, 29, 29)
+                        .addComponent(jLabel3)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Red Room");
@@ -74,15 +134,15 @@ public class View extends javax.swing.JFrame {
         entriesList.setModel(new javax.swing.table.DefaultTableModel(
             RedRoom.allEntries(new SimpleDateFormat("yyyy-MM-dd").format(dateSelector.getValue())),
             new String [] {
-                "Student", "Teacher", "Subject", "Category", "Description", "Roll"
+                "Student", "Teacher", "Subject", "Start Date", "Category", "Description", "Roll"
             }
         )
         {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -109,14 +169,21 @@ public class View extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
         jLabel2.setText("Red Room Referrals");
 
-        editButton.setText("Edit");
-        editButton.addActionListener(new java.awt.event.ActionListener() {
+        openButton.setText("Edit");
+        openButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                editButtonActionPerformed(evt);
+                openButtonActionPerformed(evt);
             }
         });
 
         jButton1.setText("Delete");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        errorLabel.setForeground(new java.awt.Color(255, 0, 0));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -143,10 +210,12 @@ public class View extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(emailButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(editButton)
+                        .addComponent(openButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(errorLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(closeButton)))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
@@ -172,8 +241,9 @@ public class View extends javax.swing.JFrame {
                     .addComponent(markRollButton)
                     .addComponent(emailButton)
                     .addComponent(closeButton)
-                    .addComponent(editButton)
-                    .addComponent(jButton1))
+                    .addComponent(openButton)
+                    .addComponent(jButton1)
+                    .addComponent(errorLabel))
                 .addGap(26, 26, 26))
         );
 
@@ -188,6 +258,7 @@ public class View extends javax.swing.JFrame {
     }//GEN-LAST:event_newEntryButtonActionPerformed
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
+        Entry.closeConnection();
         this.setVisible(false);
         this.dispose();
         System.exit(0);
@@ -249,25 +320,57 @@ public class View extends javax.swing.JFrame {
         );*/
     }//GEN-LAST:event_todayActionPerformed
 
-    private void editButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editButtonActionPerformed
+    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
+        if (entriesList.getSelectedRow() != -1) {
+            errorLabel.setText("");
+            int row = entriesList.getSelectedRow();
+            studentID = entriesList.getValueAt(row, 0).toString().split(" - ")[1];
+            teacher = entriesList.getValueAt(row, 1).toString();
+            classCode = entriesList.getValueAt(row, 2).toString().split(" - ")[1];
+            startDate = RedRoom.toSQLDate(entriesList.getValueAt(row, 3).toString());
+            category = entriesList.getValueAt(row, 4).toString();
+            comment = entriesList.getValueAt(row, 5).toString();
+            dates = RedRoom.getEntryDates(studentID, classCode, startDate);
+
+            ModifyEntry modifyEntry = new ModifyEntry();
+            modifyEntry.setVisible(true);
+            this.setVisible(false);
+        }
+        else {
+            errorLabel.setText("Please select a redroom entry.");
+        }
+    }//GEN-LAST:event_openButtonActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        this.jDialog1.setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         int row = entriesList.getSelectedRow();
-        String studentID = entriesList.getValueAt(row, 0).toString().split(" - ")[1];
-        String classCode = entriesList.getValueAt(row, 2).toString().split(" - ")[1];
-    }//GEN-LAST:event_editButtonActionPerformed
+        Entry.deleteEntry(entriesList.getValueAt(row, 0).toString().split(" - ")[1], entriesList.getValueAt(row, 2).toString().split(" - ")[1], RedRoom.toSQLDate(entriesList.getValueAt(row, 3).toString()));// TODO add your handling code here:       
+        refreshEntryTable();
+        this.jDialog1.setVisible(false);
+        this.jDialog1.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        this.jDialog1.setVisible(false);
+        this.jDialog1.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     private void refreshEntryTable() {
         entriesList.setModel(new javax.swing.table.DefaultTableModel(
             RedRoom.allEntries(new SimpleDateFormat("yyyy-MM-dd").format(dateSelector.getValue())),
             new String [] {
-                "Student", "Teacher", "Subject", "Category", "Description", "Roll"
+                "Student", "Teacher", "Subject", "Start Date", "Category", "Description", "Roll"
             }
         )
         {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -277,8 +380,7 @@ public class View extends javax.swing.JFrame {
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
-        }
-        );
+        });
     }
     
     /**
@@ -316,18 +418,64 @@ public class View extends javax.swing.JFrame {
         });
     }
 
+    public static Object[][] getDates() {
+        return dates;
+    }
+    
+    public static String getStudentID() {
+        return studentID;
+    }
+    public static String getClassCode() {
+        return classCode;
+    }
+    
+    public static String getDepartment() {
+        return RedRoom.getDepartment(studentID, classCode, startDate);
+    }
+    
+    public static String getPeriod() {
+        return RedRoom.getPeriod(studentID, classCode, startDate);
+    }
+    
+    public static String getDate() {
+        return RedRoom.getDate(studentID, classCode, startDate);
+    }
+    
+    public static String getTeacher() {
+        return teacher;
+    }
+    
+    public static String getCategory(){
+        return category;
+    }
+    
+    public static String getComment() {
+        return comment;
+    }
+    
+    public static String getStartDate() {
+        return startDate;
+    }
+    
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
     private javax.swing.JSpinner dateSelector;
-    private javax.swing.JButton editButton;
     private javax.swing.JButton emailButton;
     private javax.swing.JTable entriesList;
+    private javax.swing.JLabel errorLabel;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton markRollButton;
     private javax.swing.JButton newEntryButton;
+    private javax.swing.JButton openButton;
     private javax.swing.JButton today;
     // End of variables declaration//GEN-END:variables
 }

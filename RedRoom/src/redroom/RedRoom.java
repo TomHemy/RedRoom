@@ -136,6 +136,7 @@ public class RedRoom {
     
     /**
      * 
+     * @param date
      * @return Array of | Student name | Subject name | Teacher | Category | Comment |
      */
     public static Object[][] allEntries(String date) {
@@ -147,18 +148,23 @@ public class RedRoom {
             ResultSet rs = null;
             //String date = getCurrentDate();
             sql = "SELECT STUDENT_NAME, SUBJECT_NAME, TEACHER, CATEGORY, "
-                    + "COMMENT_TEXT, CLASS_CODE, EQID FROM ENTRY WHERE (EQID IN (SELECT EQID FROM"
+                    + "COMMENT_TEXT, CLASS_CODE, EQID, START_DATE FROM ENTRY WHERE (EQID IN (SELECT EQID FROM"
                     + " ENTRY_DATES WHERE DATE='"+date+"')) AND (CLASS_CODE IN "
                     + "(SELECT CLASS_CODE FROM ENTRY_DATES WHERE DATE='" + date
                     + "')) AND (START_DATE IN (SELECT START_DATE FROM "
                     + "ENTRY_DATES WHERE DATE='"+date+"'))";
             rs = stmt.executeQuery(sql);
             if (rs.last()) {
-                entries = new Object[rs.getRow()][6];
+                entries = new Object[rs.getRow()][7];
                 rs.beforeFirst();
             }
             while (rs.next()) {
-                entries[i] = new Object[] {rs.getString(1) + " - " + rs.getString(7), rs.getString(3), rs.getString(2) + " - " + rs.getString(6), rs.getString(4), rs.getString(5), false};
+                entries[i] = new Object[] {rs.getString("STUDENT_NAME") + " - "
+                        + rs.getString("EQID"), rs.getString("TEACHER"), 
+                        rs.getString("SUBJECT_NAME") + " - " + 
+                        rs.getString("CLASS_CODE"), 
+                        toReadableDate(rs.getString("START_DATE")), rs.getString("CATEGORY"), 
+                        rs.getString("COMMENT_TEXT"), false};
                 i++;
             }
         } catch (SQLException ex) {
@@ -166,6 +172,7 @@ public class RedRoom {
         }
         return entries;
     }
+    
     
     
     /*
@@ -199,6 +206,53 @@ public class RedRoom {
     
     public static final String[] getDateRange() {
         return dateRange();
+    }
+    static ResultSet getInformation(String eqid, String classCode, String startDate) {
+        ResultSet rs = null;
+        try {
+            String sql = "SELECT DEPARTMENT, PERIOD, DATE FROM ENTRY WHERE EQID='"+eqid+"' AND CLASS_CODE='"+classCode+"' AND START_DATE='"+startDate+"'";
+            Statement stmt = CONN.createStatement();
+            rs = stmt.executeQuery(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(RedRoom.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return rs;
+    }
+    
+    public static String getDepartment(String eqid, String classCode, String startDate) {
+        ResultSet rs = getInformation(eqid, classCode, startDate);
+        try {
+            while (rs.next()) {
+                return rs.getString("DEPARTMENT");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(RedRoom.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static String getPeriod(String eqid, String classCode, String startDate) {
+        ResultSet rs = getInformation(eqid, classCode, startDate);
+        try {
+            while (rs.next()) {
+                return rs.getString("PERIOD");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(RedRoom.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    public static String getDate(String eqid, String classCode, String startDate) {
+        ResultSet rs = getInformation(eqid, classCode, startDate);
+        try {
+            while (rs.next()) {
+                return rs.getString("DATE");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(RedRoom.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
     
     public static String[] getStudentYear(String studentID) {
@@ -251,5 +305,47 @@ public class RedRoom {
             System.out.print("Error: "+se.getMessage());
         }
         return HoD;
+    }
+    
+    /**
+     * 
+     * @param date A string in the form of dd/MM/yyyy
+     * @return a date in SQLDate format yyyy-MM-dd
+     */
+    public static String toSQLDate(String date) {
+        return date.split("/")[2]+"-"+date.split("/")[1]+"-"+date.split("/")[0];
+    }
+    
+    /**
+     * 
+     * @param date A string in the form yyyy-MM-dd
+     * @return a date in the form dd/MM/yyyy
+     */
+    public static String toReadableDate(String date) {
+        return date.split("-")[2]+"/"+date.split("-")[1]+"/"+date.split("-")[0];
+    }
+    
+    public static Object[][] getEntryDates(String studentID, String classCode, String startDate) {
+        Object[][] dates = null;
+        try {
+            ResultSet rs = null;
+            String sql = null;
+            Statement stmt = CONN.createStatement();
+            sql = "SELECT DATE, ROLL_MARKED FROM ENTRY_DATES WHERE EQID='"+studentID+"' AND CLASS_CODE='"+classCode+"' AND START_DATE='"+startDate+"'";
+            rs = stmt.executeQuery(sql);
+            if (rs.last()) {
+                dates = new Object[rs.getRow()][2];
+                rs.beforeFirst();
+            }
+            int i = 0;
+            while (rs.next()) {
+                dates[i][0] = toReadableDate(rs.getString("DATE"));
+                dates[i][1] = rs.getString("ROLL_MARKED");
+                i++;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(RedRoom.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return dates;
     }
 }
